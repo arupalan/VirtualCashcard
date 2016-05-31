@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -22,7 +19,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, timeOut);
             Assert.That(result, Is.True);
@@ -37,7 +34,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>( (x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, decimal.MaxValue, new TimeSpan(300));
             Assert.That(result, Is.False);
@@ -52,7 +49,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(false));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, new TimeSpan(300));
             Assert.That(result, Is.False);
@@ -72,7 +69,7 @@ namespace VirtualCashcardUnitTests
                     await Task.Delay(timeOut.Add(timeOut).Milliseconds, y);
                     return true;
                 });
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             Assert.That( async () => await cashCard.TopupbalanceAsync(500, 200M, timeOut),
                 Throws.TypeOf<TaskCanceledException>());
@@ -92,7 +89,7 @@ namespace VirtualCashcardUnitTests
                     return true;
                 });
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
 
             //Note 3 separate pins used to top up balance on same cash card. Is it a bug?  
@@ -111,6 +108,7 @@ namespace VirtualCashcardUnitTests
                     }
                     Assert.AreEqual(cashCard.Balance,decimal.Add(prebalance,900M));
                 });
+            
         }
 
         [Test]
@@ -122,7 +120,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, timeOut.Add(timeOut));
             Assert.That(result, Is.True);
@@ -142,7 +140,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, timeOut.Add(timeOut));
             Assert.That(result, Is.True);
@@ -166,7 +164,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, timeOut.Add(timeOut));
             Assert.That(result, Is.True);
@@ -186,7 +184,7 @@ namespace VirtualCashcardUnitTests
                 It.IsAny<CancellationToken>()))
                 .Returns<long, CancellationToken>((x, y) => Task.FromResult(true));
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             var result = await cashCard.TopupbalanceAsync(500, 200M, timeOut.Add(timeOut));
             Assert.That(result, Is.True);
@@ -201,9 +199,9 @@ namespace VirtualCashcardUnitTests
                 });
 
             prebalance = cashCard.Balance;
-            Assert.That(async () => await cashCard.WithdrawAsync(500, 200M, timeOut),
+            Assert.That( async () => await cashCard.WithdrawAsync(500, 200M, timeOut),
                 Throws.TypeOf<TaskCanceledException>());
-            Assert.AreEqual(prebalance, cashCard.Balance); ;
+            Assert.AreEqual(prebalance, cashCard.Balance); 
 
         }
 
@@ -220,7 +218,7 @@ namespace VirtualCashcardUnitTests
                     return true;
                 });
 
-            var cashCard = new VirtualCashcard.Cashcard(mockPinValidator.Object);
+            var cashCard = new Cashcard(mockPinValidator.Object);
             var prebalance = cashCard.Balance;
             await cashCard.TopupbalanceAsync(525, 900M, timeOut.Add(timeOut));
             Assert.AreEqual(cashCard.Balance, decimal.Add(prebalance, 900M));
